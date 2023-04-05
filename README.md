@@ -9,37 +9,6 @@ The Blazor beams demo application is an automatically provisioned demo applicati
 - EF Core database access
 - .NET 6
 
-*This demo is accompanied by a deck containing technical details of Codespaces, which can be found [here](https://docs.google.com/presentation/d/1rQnCTWWLgKx5ba2EapMcJNNTv10jNe36kF3fcPgO_bI/edit#slide=id.g14243e42435_0_3276)*
-
-### Table of Contents
-- Preparation
-- Standard demo
-- Extended demo talk track
-- Teardown
-
-----
-### Preparation
-- Create a new demo environment following the steps below.
-
-- Optional: Install the [GitHub CLI](https://cli.github.com/) and VS Code installed and up to date locally.
-
-#### Steps
-❗ **Note** The demo will fail if there is already a repository with that name in the Octodemo organization.  
-
-1. Open a new issue in [octodemo/bootstrap](https://github.com/octodemo/bootstrap) using the Create Demo Codespaces template.
-
-The pass/failure is reported in the issue ticket. Once it is successful the issue ticket will also be updated with the links to the new repository along with the deployment environment.
-
-When all the workflows have finished and the tracking issue is updated with a result, you're ready to move on.
-
-#### Outcome
-The bootstrap workflow creates:
-- A repository with the given name with a .devcontainer already built and configured for this repo
-- The repo contains a Dockerfile and Docker Compose config for the front and backend services
-
-❗ **Note** After creating the repository with demo bootstrap, you will need to create a [Codespaces pre-build](https://docs.github.com/en/codespaces/prebuilding-your-codespaces/configuring-prebuilds#configuring-a-prebuild).
-
-If this is the first time you use the demo, before delivering the demo it is best to familiarize yourself with the repository and the workflows.
 
 ----
 ## Standard Demo
@@ -193,8 +162,3 @@ This will get us some octocat pictures that we want to incorporate into the appl
 2. `CMD/CTL + Shift + P` / `Open in local container`
 3. Show the containers running in Docker dashboard
 > 🎤 **Talk Track**: I still get this dev env as code, but I can run this offline
-
-----
-## Teardown
-After completing the demo, close the issue created in the demo-bootstrap repo to remove your repo and create a fresh one next time you demo.
-This will help keep the repo clean, and ensure you have the most up-to-date demo to deliver on a clean slate.
