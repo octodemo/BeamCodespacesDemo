@@ -1,0 +1,32 @@
+---
+
+- hosts: localhost
+  tasks:
+    - name: Parse Terraform Context
+      set_fact:
+        context: "{{ lookup('env', 'TERRAFORM_PARAMETERS_B64') | b64decode | from_json }}"
+        github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"
+
+    - name: Validate Context
+      assert:
+        that:
+          - context is defined
+          - context.github_context is defined
+
+          - context.github_context.target_repository is defined
+          - context.github_context.target_repository.owner is defined
+          - context.github_context.target_repository.repo is defined
+
+          - github_token is defined
+
+    - name: Invoke Issue creation workflow
+      uri:
+        url: https://api.github.com/repos/{{ context.github_context.target_repository.owner }}/{{ context.github_context.target_repository.repo }}/actions/workflows/initialize.yml/dispatches
+        method: POST
+        headers:
+          Accept: application/vnd.github.v3+json
+          Authorization: bearer {{ github_token }}
+        body_format: json
+        body:
+          ref: "main"
+        status_code: 204

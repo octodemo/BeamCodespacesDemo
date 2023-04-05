@@ -1,0 +1,32 @@
+name: Initialize the GitHub Repository
+
+# This is a bootstrapping workflow to initialize the repository to enable the secret push protection rules, 
+# that needs to occur only after the repository has been created
+
+on:
+  workflow_dispatch:
+
+jobs:
+   Enable-Secret-Scanning:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Get temporary token for updating repo settings
+        id: temp_token
+        uses: peter-murray/workflow-application-token-action@v2
+        with:
+          application_id: ${{ secrets.OCTODEMOBOT_APPLICATION_ID_REPO_AUTOMATION }}
+          application_private_key: ${{ secrets.OCTODEMOBOT_APPLICATION_KEY_REPO_AUTOMATION }}
+
+      - name: Update Secret Scanning Push Protection Rule
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.temp_token.outputs.token }}
+          script: |
+            await github.rest.repos.update({
+              ...context.repo,
+              security_and_analysis: {
+                secret_scanning_push_protection: {
+                  status: "enabled"
+                }
+              }
+            });
