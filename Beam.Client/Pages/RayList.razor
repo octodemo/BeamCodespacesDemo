@@ -1,0 +1,37 @@
+@page "/frequency/{id}"
+@inject DataService data
+
+
+<RayInput newRayText="@newRayText" />
+@foreach (var ray in data.Rays)
+{
+    <p>
+        <RayItem ray="@ray" />
+    </p>
+}
+
+
+@code{
+    [Parameter]
+    public string Id { get; set; } = "";
+
+    public string newRayText { get; set; } = "";
+
+    protected override void OnParametersSet()
+    {
+        data.UpdatedRays += StateHasChanged;
+        data.UpdatedRays += UpdateNewRayText;
+        data.SelectedFrequency = Int32.Parse(Id);
+        UpdateNewRayText();
+    }
+
+    void UpdateNewRayText()
+    {
+        if (!data.Rays.Any(r => r.UserName == data.CurrentUser.Name))
+        {
+            newRayText = $"Hello, My Name is {data.CurrentUser.Name}";
+        }
+    }
+
+
+}
