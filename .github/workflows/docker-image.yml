@@ -1,0 +1,42 @@
+#Deploy the docker image to the GitHub Container Registry
+name: Docker Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+  
+jobs:
+  build-publish:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/login-action@v2.1.0
+      with: 
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+          
+    - name: Lowercase the repo name
+      run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+        
+    - name: docker compose
+      run: |
+        VERSION="${{ github.event.inputs.version }}"
+        echo '::set-output name=semver::$(echo $VERSION)'
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        VERSION=$VERSION docker-compose -f .devcontainer/docker-compose.yml up --no-start --remove-orphans
+
+    - name: tag and push
+      run: |
+        TAG="ghcr.io/${{ env.REPO }}/beamdb:${{github.event.inputs.version}}"
+        docker tag "mcr.microsoft.com/azure-sql-edge" $TAG
+        docker push $TAG
+
+        TAG="ghcr.io/${{ env.REPO }}/beam:${{github.event.inputs.version}}"
+        docker tag "devcontainer_beam" $TAG
+        docker push $TAG

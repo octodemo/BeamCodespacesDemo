@@ -1,0 +1,8 @@
+{
+  "name": "Codespaces",
+  
+  "lifecycle": {
+    "warning": 7,
+    "terminate": 14
+  }
+}
