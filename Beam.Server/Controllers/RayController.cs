@@ -20,9 +20,12 @@ namespace Beam.Server.Controllers
         [HttpGet("user/{name}")]
         public List<Ray> GetRaysByUser(string name)
         {
-            return _context.Rays.Include(r => r.Prisms).ThenInclude(p => p.User).Include(r => r.User)
-                .Where(r => r.User.Username == name)
-                .Select(r => r.ToShared()).ToList();
+            return _context.Rays.AsNoTracking()
+        .Include(r => r.Prisms).ThenInclude(p => p.User)
+        .Include(r => r.User)
+        .Where(r => r.User.Username == name)
+        .Select(r => r.ToShared())
+        .ToList();
         }
 
         [HttpGet("userprisms/{name}")]
