@@ -39,6 +39,7 @@ namespace Beam.Client.Services
 
         public event Action? UdpatedFrequencies;
         public event Action? UpdatedRays;
+        public event Action? UpdatedUsers;
 
         public async Task GetFrequencies()
         {
@@ -102,5 +103,27 @@ namespace Beam.Client.Services
             return await _apiService.UserRays(name ?? CurrentUser.Name); 
         }
 
+        public async Task AddUser(string name)
+        {
+            await _apiService.AddUser(new User() { Name = name });
+            UpdatedUsers?.Invoke();
+        }
+
+        public async Task EditUser(int id, string newName)
+        {
+            await _apiService.EditUser(id, newName);
+            UpdatedUsers?.Invoke();
+        }
+
+        public async Task DeleteUser(int id)
+        {
+            await _apiService.DeleteUser(id);
+            UpdatedUsers?.Invoke();
+        }
+
+        public async Task<List<User>> GetUsers()
+        {
+            return await _apiService.GetUsers();
+        }
     }
 }
