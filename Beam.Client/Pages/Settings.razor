@@ -8,17 +8,72 @@
         <button @onclick="UpdateUser" type="button" class="btn btn-outline-secondary">Update</button>
     </div>
 </div>
+
+<h3>User Management</h3>
+<div>
+    <ul>
+        @foreach (var user in users)
+        {
+            <li>
+                @user.Name
+                <button @onclick="(() => EditUser(user))" class="btn btn-outline-secondary">Edit</button>
+                <button @onclick="(() => DeleteUser(user))" class="btn btn-outline-danger">Delete</button>
+            </li>
+        }
+    </ul>
+</div>
+
+<h4>Add New User</h4>
+<div class="input-group">
+    <input @bind="newUserName" class="form-control" placeholder="Enter new user name" />
+    <div class="input-group-append">
+        <button @onclick="AddUser" type="button" class="btn btn-outline-secondary">Add</button>
+    </div>
+</div>
+
 <Beam.Animation.AnimatedBeam />
 
 @code{
     private string name = "";
+    private string newUserName = "";
+    private List<User> users = new List<User>();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         name = data.CurrentUser.Name;
+        users = await data.GetUsers();
     }
+
     async Task UpdateUser()
     {
         await data.GetOrCreateUser(name);
+    }
+
+    async Task AddUser()
+    {
+        await data.AddUser(newUserName);
+        newUserName = "";
+        users = await data.GetUsers();
+    }
+
+    async Task EditUser(User user)
+    {
+        var newName = prompt("Enter new name for user", user.Name);
+        if (!string.IsNullOrEmpty(newName))
+        {
+            await data.EditUser(user.Id, newName);
+            users = await data.GetUsers();
+        }
+    }
+
+    async Task DeleteUser(User user)
+    {
+        await data.DeleteUser(user.Id);
+        users = await data.GetUsers();
+    }
+
+    private string? prompt(string message, string defaultValue)
+    {
+        return Microsoft.JSInterop.JSRuntime.Current.InvokeAsync<string>("prompt", message, defaultValue).Result;
     }
 }
